@@ -3,13 +3,30 @@ import "./App.css";
 
 function App() {
   const [emailText, setEmailText] = useState("");
+  const [backendMessage, setBackendMessage] = useState("");
 
   function handleEmailChange(event) {
     setEmailText(event.target.value);
   }
 
-  function handleAnalyzeClick() {
-    alert("Email analysis will be added in a later sprint.");
+  async function handleAnalyzeClick() {
+    const response = await fetch("http://127.0.0.1:5000/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: emailText,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+    setBackendMessage(data.message);
+  } else {
+    setBackendMessage(data.error);
+  }
   }
 
   return (
@@ -38,6 +55,8 @@ function App() {
             Analyze Email
           </button>
         </div>
+
+        {backendMessage && <p className="result-message">{backendMessage}</p>}
       </section>
     </main>
   );

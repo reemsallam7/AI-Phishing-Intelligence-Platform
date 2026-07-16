@@ -71,15 +71,29 @@ function App() {
         {backendMessage && <p className="result-message">{backendMessage}</p>}
 
         {parsedEmail && (
-          <section className="parsed-email">
-            <h2>Parsed Email</h2>
-            <p><strong>From:</strong> {parsedEmail.from ?? "Missing"}</p>
-            <p><strong>To:</strong> {parsedEmail.to ?? "Missing"}</p>
-            <p><strong>Subject:</strong> {parsedEmail.subject ?? "Missing"}</p>
-            <p><strong>Body:</strong></p>
-            <pre>{parsedEmail.body ?? "Missing"}</pre>
-          </section>
-        )}
+  <section className="parsed-email">
+    <h2>Parsed Email</h2>
+
+    <p><strong>From:</strong> {parsedEmail.from ?? "Missing"}</p>
+    <p><strong>To:</strong> {parsedEmail.to ?? "Missing"}</p>
+    <p><strong>Subject:</strong> {parsedEmail.subject ?? "Missing"}</p>
+
+    <p><strong>Body:</strong></p>
+    <pre>{parsedEmail.body ?? "Missing"}</pre>
+
+    <h3>Extracted URLs</h3>
+
+    {parsedEmail.urls.length > 0 ? (
+      <ul>
+        {parsedEmail.urls.map((url) => (
+          <li key={url}>{url}</li>
+        ))}
+      </ul>
+    ) : (
+      <p>No URLs found.</p>
+    )}
+  </section>
+)}
       </section>
     </main>
   );

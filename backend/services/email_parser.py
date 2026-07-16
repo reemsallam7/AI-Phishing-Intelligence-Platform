@@ -1,17 +1,21 @@
 from email import policy
 from email.parser import Parser
 
+from services.url_extractor import extract_urls
+
 def parse_email(email_text):
     # Use the email parser to parse the email text
     clean_email = email_text.strip()
     email_message = Parser(policy=policy.default).parsestr(clean_email)
     
+    body = extract_body(email_message)
     # Extract relevant fields from the email message
     return {
         "from": clean_header(email_message.get("From")),
         "to": clean_header(email_message.get("To")),
         "subject": clean_header(email_message.get("Subject")),
-        "body": extract_body(email_message),
+        "body": body,
+        "urls": extract_urls(body)
     }
 
 

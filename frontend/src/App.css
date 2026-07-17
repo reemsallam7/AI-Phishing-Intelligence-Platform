@@ -130,3 +130,15 @@ button:hover {
   margin-bottom: 8px;
   word-break: break-all;
 }
+
+.parsed-email ul ul {
+  margin-top: 8px;
+}
+
+.parsed-email li {
+  margin-bottom: 12px;
+}
+
+.parsed-email strong {
+  word-break: break-all;
+}

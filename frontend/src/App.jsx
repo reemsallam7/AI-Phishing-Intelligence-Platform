@@ -92,7 +92,85 @@ function App() {
     ) : (
       <p>No URLs found.</p>
     )}
+
+    <h3>VirusTotal Reputation</h3>
+
+{parsedEmail.url_reputation.length > 0 ? (
+  <ul>
+    {parsedEmail.url_reputation.map((result) => (
+      <li key={result.url}>
+        <strong>{result.url}</strong>
+        <br />
+        Status: {result.status}
+        <br />
+        Malicious: {result.malicious ?? "N/A"}
+        <br />
+        Suspicious: {result.suspicious ?? "N/A"}
+        <br />
+        Harmless: {result.harmless ?? "N/A"}
+        <br />
+        Undetected: {result.undetected ?? "N/A"}
+        {result.message && (
+          <>
+            <br />
+            Message: {result.message}
+          </>
+        )}
+      </li>
+    ))}
+  </ul>
+) : (
+  <p>No URL reputation results.</p>
+)}
+
+  <h3>URL Analysis</h3>
+
+{parsedEmail.url_analysis.length > 0 ? (
+  <ul>
+    {parsedEmail.url_analysis.map((analysis) => (
+      <li key={analysis.url}>
+        <strong>{analysis.url}</strong>
+        <br />
+        Scheme: {analysis.scheme || "Missing"}
+        <br />
+        Domain: {analysis.domain || "Missing"}
+        <br />
+        Path: {analysis.path || "Missing"}
+        <br />
+        TLD: {analysis.tld || "Missing"}
+        <br />
+        URL length: {analysis.features.url_length}
+        <br />
+        Dots: {analysis.features.dot_count}
+        <br />
+        Hyphens: {analysis.features.hyphen_count}
+        <br />
+        Digits: {analysis.features.digit_count}
+        <br />
+        Uses HTTPS: {analysis.features.uses_https ? "Yes" : "No"}
+        <br />
+        Uses IP address: {analysis.features.uses_ip_address ? "Yes" : "No"}
+
+        <br />
+        Risk indicators:
+        {analysis.risk_indicators.length > 0 ? (
+          <ul>
+            {analysis.risk_indicators.map((indicator) => (
+              <li key={indicator}>{indicator}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No simple risk indicators found.</p>
+        )}
+      </li>
+    ))}
+  </ul>
+) : (
+  <p>No URL analysis available.</p>
+)}
+
   </section>
+
 )}
       </section>
     </main>

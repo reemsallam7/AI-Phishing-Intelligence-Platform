@@ -12,6 +12,8 @@ def extract_urls(text):
 
     for url in urls:
         cleaned_url = url.rstrip(".,)")
-        cleaned_urls.append(cleaned_url)
+
+        if cleaned_url not in cleaned_urls:
+            cleaned_urls.append(cleaned_url)
 
     return cleaned_urls

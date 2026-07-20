@@ -1,23 +1,58 @@
-# AI-Phishing-Intelligence-Platform
-AI-powered platform for analyzing phishing emails, URLs, and attachments using threat intelligence APIs and machine learning.
+# AI Phishing Intelligence Platform
 
-Short project overview
+An AI-powered full-stack web application for detecting and analyzing phishing emails using machine learning and threat intelligence services.
 
-## Features (Planned)
+## Overview
 
-- Email analysis
-- URL extraction
-- URL reputation checking
+The AI Phishing Intelligence Platform helps users identify potentially malicious emails by analyzing email content, extracting URLs, checking their reputation through external threat intelligence services, and generating a phishing risk assessment.
+
+## Features
+
+### Completed
+- Email upload and analysis
+- URL extraction from emails
+- Interactive dashboard
+- VirusTotal integration
+- URL reputation analysis
+
+### In Progress
+- User Authentication
+- URLScan.io integration
 - AI phishing classification
-- Threat intelligence integration
-- Dashboard
+- Risk scoring
 - Scan history
-- User authentication
+- Threat intelligence enrichment
 
 ## Tech Stack
 
-Backend
-Frontend
-Database
-AI
-Threat Intelligence APIs
+### Frontend
+- React
+- TypeScript
+
+### Backend
+- Flask
+- Python
+- RESTful APIs
+
+### Database
+- MongoDB
+
+### AI
+- Machine Learning (planned)
+
+### Threat Intelligence
+- VirusTotal API
+- URLScan.io API
+
+## Project Status
+
+Currently under active development.
+
+## Future Improvements
+
+- Attachment analysis
+- Domain reputation analysis
+- IP reputation analysis
+- Admin dashboard
+- Analytics
+- Report generation

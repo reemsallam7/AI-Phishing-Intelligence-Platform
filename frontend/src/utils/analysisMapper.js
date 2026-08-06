@@ -3,21 +3,25 @@ export function normalizeAnalysisResponse(data) {
 
   return {
     classification: ai.classification ?? "Suspicious",
-    confidence: ai.confidence ?? 50,
+    confidence: ai.confidence ?? ai.confidence_score ?? 50,
     summary: ai.summary ?? buildFallbackSummary(ai),
-    explanation: ai.explanation ?? [],
-    recommendations: ai.recommendations ?? [],
-    urls: data.urls ?? data.parsed_email?.urls ?? [],
+    explanation: Array.isArray(ai.explanation) ? ai.explanation : [],
+    recommendations: Array.isArray(ai.recommendations)
+      ? ai.recommendations
+      : [],
+
+    urls: data.parsed_email?.urls ?? data.urls ?? [],
     virusTotalResults:
-      data.virusTotalResults ?? data.parsed_email?.url_reputation ?? [],
+      data.parsed_email?.url_reputation ?? data.virusTotalResults ?? [],
     domainAnalysis:
-      data.domainAnalysis ?? data.parsed_email?.url_analysis ?? [],
+      data.parsed_email?.url_analysis ?? data.domainAnalysis ?? [],
+
     technicalDetails: {
-      sender: data.parsed_email?.from ?? data.sender ?? "Missing",
-      recipient: data.parsed_email?.to ?? data.recipient ?? "Missing",
-      subject: data.parsed_email?.subject ?? data.subject ?? "Missing",
+      sender: data.parsed_email?.from ?? "Missing",
+      recipient: data.parsed_email?.to ?? "Missing",
+      subject: data.parsed_email?.subject ?? "Missing",
       scanTime: data.created_at ?? new Date().toLocaleString(),
-      urlCount: data.parsed_email?.urls?.length ?? data.urls?.length ?? 0,
+      urlCount: data.parsed_email?.urls?.length ?? 0,
       analysisId: data.analysis_id ?? "Not saved",
     },
   };
@@ -26,5 +30,5 @@ export function normalizeAnalysisResponse(data) {
 function buildFallbackSummary(ai) {
   return `The analysis classified this email as ${
     ai.classification ?? "Suspicious"
-  } with ${ai.confidence ?? 50}% confidence.`;
+  } with ${ai.confidence ?? ai.confidence_score ?? 50}% confidence.`;
 }

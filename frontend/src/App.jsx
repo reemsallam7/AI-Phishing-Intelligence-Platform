@@ -17,36 +17,36 @@ function App() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   async function handleAnalyzeClick() {
-    setIsAnalyzing(true);
-    setStatusMessage("");
-    setReport(null);
+  setIsAnalyzing(true);
+  setStatusMessage("");
+  setReport(null);
 
-    try {
-      const response = await fetch("http://127.0.0.1:5000/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: emailText,
-        }),
-      });
+  try {
+    const response = await fetch("http://127.0.0.1:5000/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: emailText,
+      }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (!response.ok) {
-        setStatusMessage(data.error ?? "Analysis failed.");
-        return;
-      }
-
-      setStatusMessage(data.message ?? "Analysis complete.");
-      setReport(normalizeAnalysisResponse(data));
-    } catch {
-      setStatusMessage("Could not connect to the backend.");
-    } finally {
-      setIsAnalyzing(false);
+    if (!response.ok) {
+      setStatusMessage(data.error ?? "Analysis failed.");
+      return;
     }
+
+    setStatusMessage(data.message ?? "Analysis complete.");
+    setReport(normalizeAnalysisResponse(data));
+  } catch {
+    setStatusMessage("Could not connect to the backend.");
+  } finally {
+    setIsAnalyzing(false);
   }
+}
 
   function handleClearClick() {
     setEmailText("");

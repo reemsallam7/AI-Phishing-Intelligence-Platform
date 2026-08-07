@@ -30,6 +30,7 @@ def build_classification_prompt(parsed_email):
         "extracted_urls": parsed_email.get("urls", []),
         "virustotal_results": parsed_email.get("url_reputation", []),
         "domain_analysis": parsed_email.get("url_analysis", []),
+        "urlscan_results": parsed_email.get("urlscan_results", []),
         "ip_reputation": parsed_email.get("ip_reputation", []),
         "risk_indicators": collect_risk_indicators(parsed_email),
     }
@@ -66,6 +67,9 @@ Rules:
 - If URLs use IP addresses, HTTP, suspicious domains, or risky indicators, explain that.
 - If evidence is limited or mixed, classify as Suspicious.
 - If no suspicious evidence exists, classify as Safe.
+- Use URLScan evidence when available.
+- Consider URLScan verdict, final redirected URL, hosting country, IP address, server technology, and page title.
+- If URLScan is unavailable, continue using the other evidence.
 
 Evidence:
 {json.dumps(evidence, indent=2)}

@@ -285,3 +285,163 @@ pre {
     grid-template-columns: 1fr;
   }
 }
+
+.urlscan-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.urlscan-card {
+  border: 1px solid #d7dee7;
+  border-radius: 8px;
+  padding: 16px;
+  background: #f7f9fb;
+}
+
+.urlscan-card img {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border: 1px solid #d7dee7;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.screenshot-placeholder {
+  display: flex;
+  min-height: 160px;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #9aa6b2;
+  border-radius: 8px;
+  color: #52606d;
+  background: #ffffff;
+  margin-bottom: 16px;
+}
+
+.navigation {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.navigation button {
+  background: #e5e9ef;
+  color: #17202a;
+}
+
+.navigation .nav-active {
+  background: #155e75;
+  color: #ffffff;
+}
+
+.page-section {
+  background: #ffffff;
+  border: 1px solid #d7dee7;
+  border-radius: 8px;
+  padding: 28px;
+  box-shadow: 0 10px 24px rgba(21, 32, 43, 0.06);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.stat-card {
+  border: 1px solid #d7dee7;
+  border-radius: 8px;
+  padding: 18px;
+  background: #f7f9fb;
+}
+
+.stat-card h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.stat-card p {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 800;
+}
+
+.stat-card span {
+  color: #52606d;
+}
+
+.history-controls {
+  display: grid;
+  grid-template-columns: 1fr 180px 220px auto;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.history-controls input,
+.history-controls select {
+  border: 1px solid #bcccdc;
+  border-radius: 7px;
+  padding: 11px;
+  font: inherit;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background: #f7f9fb;
+}
+
+.error-message {
+  color: #9f1d1d;
+  font-weight: 700;
+}
+
+.bar-chart {
+  display: grid;
+  gap: 14px;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 100px 1fr 40px;
+  gap: 12px;
+  align-items: center;
+}
+
+.bar-track {
+  height: 14px;
+  border-radius: 999px;
+  background: #e5e9ef;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+}
+
+.bar-phishing {
+  background: #c92a2a;
+}
+
+.bar-suspicious {
+  background: #f08c00;
+}
+
+.bar-safe {
+  background: #2b8a3e;
+}
+
+@media (max-width: 860px) {
+  .stats-grid,
+  .history-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .navigation {
+    flex-direction: column;
+  }
+}

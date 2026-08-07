@@ -15,7 +15,8 @@ export function normalizeAnalysisResponse(data) {
       data.parsed_email?.url_reputation ?? data.virusTotalResults ?? [],
     domainAnalysis:
       data.parsed_email?.url_analysis ?? data.domainAnalysis ?? [],
-
+    urlScanResults:
+      data.parsed_email?.urlscan_results ?? data.urlScanResults ?? [],
     technicalDetails: {
       sender: data.parsed_email?.from ?? "Missing",
       recipient: data.parsed_email?.to ?? "Missing",

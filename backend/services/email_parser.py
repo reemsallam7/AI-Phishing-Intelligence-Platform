@@ -4,6 +4,7 @@ from email.parser import Parser
 from services.url_extractor import extract_urls
 from services.threat_intelligence import get_url_reputation
 from services.domain_analysis import analyze_url
+from services.urlscan_service import analyze_urls_with_urlscan
 
 def parse_email(email_text):
     # Use the email parser to parse the email text
@@ -24,6 +25,8 @@ def parse_email(email_text):
         analysis = analyze_url(url)
         url_analysis.append(analysis)
 
+    urlscan_results = analyze_urls_with_urlscan(urls)
+
     # Extract relevant fields from the email message
     return {
         "from": clean_header(email_message.get("From")),
@@ -33,6 +36,7 @@ def parse_email(email_text):
         "urls": urls,
         "url_reputation": url_reputations,
         "url_analysis": url_analysis,
+        "urlscan_results": urlscan_results,
     }
 
 

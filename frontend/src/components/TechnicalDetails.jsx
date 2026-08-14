@@ -39,6 +39,20 @@ export default function TechnicalDetails({
         </div>
       </dl>
 
+      <h3>Performance Timings</h3>
+      {Object.keys(details.performance ?? {}).length > 0 ? (
+        <dl>
+          {Object.entries(details.performance).map(([stage, duration]) => (
+            <div key={stage}>
+              <dt>{formatStageName(stage)}</dt>
+              <dd>{duration}s</dd>
+            </div>
+          ))}
+        </dl>
+      ) : (
+        <p className="muted-text">No timing data available.</p>
+      )}
+
       <h3>Threat Intelligence Results</h3>
       <pre>{JSON.stringify(virusTotalResults, null, 2)}</pre>
 
@@ -46,4 +60,11 @@ export default function TechnicalDetails({
       <pre>{JSON.stringify(domainAnalysis, null, 2)}</pre>
     </details>
   );
+}
+
+function formatStageName(stage) {
+  return stage
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }

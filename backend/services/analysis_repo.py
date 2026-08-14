@@ -3,6 +3,7 @@ import re
 
 from bson import ObjectId
 from bson.errors import InvalidId
+from pymongo import ASCENDING, DESCENDING
 from pymongo.errors import PyMongoError
 
 from services.database import database
@@ -35,6 +36,7 @@ def build_scan_document(parsed_email, ai_analysis):
         "summary": ai_analysis.get("summary"),
         "explanation": ai_analysis.get("explanation", []),
         "recommendations": ai_analysis.get("recommendations", []),
+        "performance": parsed_email.get("performance", {}),
         "created_at": datetime.now(timezone.utc),
     }
 
@@ -152,6 +154,7 @@ def serialize_scan_detail(scan):
             "url_reputation": scan.get("url_reputation", []),
             "urlscan_results": scan.get("urlscan_results", []),
             "url_analysis": scan.get("url_analysis", []),
+            "performance": scan.get("performance", {}),
         },
         "ai_analysis": scan.get("ai_analysis", {}),
     }
@@ -162,3 +165,30 @@ def calculate_percentage(value, total):
         return 0
 
     return round((value / total) * 100, 1)
+
+
+def ensure_scan_indexes():
+    scans_collection.create_index(
+        [("created_at", DESCENDING)],
+        name="scans_created_at",
+    )
+    scans_collection.create_index(
+        [("classification", ASCENDING), ("created_at", DESCENDING)],
+        name="scans_classification_created_at",
+    )
+    scans_collection.create_index(
+        [("confidence", DESCENDING)],
+        name="scans_confidence",
+    )
+    scans_collection.create_index(
+        [("sender", ASCENDING)],
+        name="scans_sender",
+    )
+    scans_collection.create_index(
+        [("subject", ASCENDING)],
+        name="scans_subject",
+    )
+    scans_collection.create_index(
+        [("urls", ASCENDING)],
+        name="scans_urls",
+    )

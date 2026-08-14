@@ -1,10 +1,12 @@
 import base64
+import logging
 import os
 
 import requests
 
 
 VIRUSTOTAL_URL_REPORT_ENDPOINT = "https://www.virustotal.com/api/v3/urls"
+logger = logging.getLogger(__name__)
 
 
 def get_url_reputation(url):
@@ -23,9 +25,17 @@ def get_url_reputation(url):
         response = requests.get(
             f"{VIRUSTOTAL_URL_REPORT_ENDPOINT}/{url_id}",
             headers={"x-apikey": api_key},
-            timeout=10,
+            timeout=int(os.getenv("VIRUSTOTAL_TIMEOUT_SECONDS", "8")),
         )
-    except requests.RequestException:
+    except requests.Timeout:
+        logger.warning("VirusTotal timeout for URL: %s", url)
+        return {
+            "url": url,
+            "status": "timeout",
+            "message": "VirusTotal analysis timed out.",
+        }
+    except requests.RequestException as error:
+        logger.warning("VirusTotal request failed for URL %s: %s", url, error)
         return {
             "url": url,
             "status": "error",

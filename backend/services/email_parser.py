@@ -2,30 +2,21 @@ from email import policy
 from email.parser import Parser
 
 from services.url_extractor import extract_urls
-from services.threat_intelligence import get_url_reputation
-from services.domain_analysis import analyze_url
-from services.urlscan_service import analyze_urls_with_urlscan
+from services.performance import create_timings, measure_stage
+from services.url_intelligence import analyze_urls
 
 def parse_email(email_text):
+    timings = create_timings()
+
     # Use the email parser to parse the email text
-    clean_email = email_text.strip()
-    email_message = Parser(policy=policy.default).parsestr(clean_email)
-    
-    body = extract_body(email_message)
-    urls = extract_urls(body)
+    with measure_stage(timings, "email_parsing"):
+        clean_email = email_text.strip()
+        email_message = Parser(policy=policy.default).parsestr(clean_email)
+        body = extract_body(email_message)
+        urls = extract_urls(body)
 
-    url_reputations =[]
-
-    for url in urls:
-        reputation = get_url_reputation(url)
-        url_reputations.append(reputation)
-
-    url_analysis = []
-    for url in urls:
-        analysis = analyze_url(url)
-        url_analysis.append(analysis)
-
-    urlscan_results = analyze_urls_with_urlscan(urls)
+    with measure_stage(timings, "url_intelligence"):
+        url_results = analyze_urls(urls, timings)
 
     # Extract relevant fields from the email message
     return {
@@ -34,9 +25,10 @@ def parse_email(email_text):
         "subject": clean_header(email_message.get("Subject")),
         "body": body,
         "urls": urls,
-        "url_reputation": url_reputations,
-        "url_analysis": url_analysis,
-        "urlscan_results": urlscan_results,
+        "url_reputation": url_results["url_reputation"],
+        "url_analysis": url_results["url_analysis"],
+        "urlscan_results": url_results["urlscan_results"],
+        "performance": timings,
     }
 
 

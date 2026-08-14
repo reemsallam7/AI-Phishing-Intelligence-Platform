@@ -24,6 +24,7 @@ export function normalizeAnalysisResponse(data) {
       scanTime: data.created_at ?? new Date().toLocaleString(),
       urlCount: data.parsed_email?.urls?.length ?? 0,
       analysisId: data.analysis_id ?? "Not saved",
+      performance: data.parsed_email?.performance ?? data.performance ?? {},
     },
   };
 }

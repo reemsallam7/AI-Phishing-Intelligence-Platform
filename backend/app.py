@@ -1,18 +1,44 @@
+import logging
+
+from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from pymongo.errors import PyMongoError
 
+load_dotenv()
+
 from services.ai_classifier import classify_email_with_ai
 from services.analysis_repo import (
+    ensure_scan_indexes,
     get_dashboard_stats,
     get_scan_by_id,
     get_scans,
     save_scan,
 )
 from services.email_parser import parse_email
+from services.performance import measure_stage
+from services.url_cache_repo import ensure_url_cache_indexes
 
 app = Flask(__name__)
 CORS(app)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+
+def initialize_database_indexes():
+    try:
+        ensure_scan_indexes()
+        ensure_url_cache_indexes()
+        logger.info("MongoDB indexes are ready.")
+    except PyMongoError as error:
+        logger.warning("Could not create MongoDB indexes: %s", error)
+
+
+initialize_database_indexes()
 
 
 @app.get("/health")
@@ -28,10 +54,36 @@ def analyze_email():
     if not email_text:
         return jsonify({"error": "No email text provided."}), 400
 
-    parsed_email = parse_email(email_text)
-    ai_analysis = classify_email_with_ai(parsed_email)
+    logger.info("Analysis started. email_length=%s", len(email_text))
+    timings = {}
 
-    analysis_id = save_scan(parsed_email, ai_analysis)
+    try:
+        with measure_stage(timings, "analysis_pipeline"):
+            parsed_email = parse_email(email_text)
+
+            with measure_stage(timings, "ollama"):
+                ai_analysis = classify_email_with_ai(parsed_email)
+
+            parsed_email["performance"] = {
+                **parsed_email.get("performance", {}),
+                **timings,
+            }
+
+            with measure_stage(parsed_email["performance"], "mongodb_save"):
+                analysis_id = save_scan(parsed_email, ai_analysis)
+
+    except PyMongoError:
+        logger.exception("Database failure while saving completed analysis.")
+        return jsonify({"error": "Analysis completed, but saving failed."}), 500
+    except Exception:
+        logger.exception("Unexpected analysis failure.")
+        return jsonify({"error": "Unexpected backend error during analysis."}), 500
+
+    logger.info(
+        "Analysis completed. analysis_id=%s timings=%s",
+        analysis_id,
+        parsed_email.get("performance", {}),
+    )
 
     return jsonify({
         "message": "Email analyzed and saved successfully.",

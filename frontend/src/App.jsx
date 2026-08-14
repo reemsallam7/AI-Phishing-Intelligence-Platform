@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 
+import AnalysisProgress from "./components/AnalysisProgress";
 import ConfidenceCard from "./components/ConfidenceCard";
 import DashboardPage from "./pages/DashboardPage";
 import EvidenceList from "./components/EvidenceList";
@@ -14,6 +15,8 @@ import UrlAnalysisTable from "./components/UrlAnalysisTable";
 import URLScanAnalysis from "./components/UrlScanAnalysis";
 import { normalizeAnalysisResponse } from "./utils/analysisMapper";
 
+const ANALYSIS_TIMEOUT_MS = 180000;
+
 function App() {
   const [emailText, setEmailText] = useState("");
   const [report, setReport] = useState(null);
@@ -26,6 +29,9 @@ function App() {
     setStatusMessage("");
     setReport(null);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), ANALYSIS_TIMEOUT_MS);
+
     try {
       const response = await fetch("http://127.0.0.1:5000/analyze", {
         method: "POST",
@@ -35,6 +41,7 @@ function App() {
         body: JSON.stringify({
           email: emailText,
         }),
+        signal: controller.signal,
       });
 
       const data = await response.json();
@@ -46,9 +53,14 @@ function App() {
 
       setStatusMessage(data.message ?? "Analysis complete.");
       setReport(normalizeAnalysisResponse(data));
-    } catch {
-      setStatusMessage("Could not connect to the backend.");
+    } catch (error) {
+      if (error.name === "AbortError") {
+        setStatusMessage("Analysis timed out. Try again with fewer URLs or retry later.");
+      } else {
+        setStatusMessage(error.message || "Could not connect to the backend.");
+      }
     } finally {
+      clearTimeout(timeoutId);
       setIsAnalyzing(false);
     }
   }
@@ -113,6 +125,8 @@ function App() {
 
             {statusMessage && <p className="status-message">{statusMessage}</p>}
           </section>
+
+          <AnalysisProgress isAnalyzing={isAnalyzing} />
 
           {report && (
             <section className="report" aria-labelledby="report-title">

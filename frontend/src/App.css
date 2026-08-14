@@ -53,6 +53,49 @@ h1 {
   color: #52606d;
 }
 
+.progress-card {
+  margin-top: 18px;
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #d7dee7;
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(21, 32, 43, 0.06);
+}
+
+.progress-card h2 {
+  margin-bottom: 8px;
+}
+
+.progress-list {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.progress-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #344054;
+}
+
+.progress-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #bcccdc;
+  border-top-color: #155e75;
+  border-radius: 999px;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 label {
   display: block;
   margin: 24px 0 8px;

@@ -1,10 +1,14 @@
 import os
+import logging
 
 import requests
 
 
 class LLMServiceError(Exception):
     pass
+
+
+logger = logging.getLogger(__name__)
 
 
 def generate_llm_response(prompt):
@@ -30,7 +34,7 @@ def generate_llm_response(prompt):
         response = requests.post(
             f"{ollama_url}/api/generate",
             json=payload,
-            timeout=120,
+            timeout=int(os.getenv("OLLAMA_TIMEOUT_SECONDS", "90")),
         )
 
         if debug_llm:
@@ -41,7 +45,11 @@ def generate_llm_response(prompt):
 
         response.raise_for_status()
 
+    except requests.Timeout as error:
+        logger.warning("Ollama request timed out.")
+        raise LLMServiceError("Ollama analysis timed out.") from error
     except requests.RequestException as error:
+        logger.warning("Ollama request failed: %s", error)
         raise LLMServiceError(f"Ollama request failed: {error}") from error
 
     data = response.json()

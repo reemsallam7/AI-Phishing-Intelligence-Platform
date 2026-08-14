@@ -1,10 +1,12 @@
 import os
 import time
+import logging
 
 import requests
 
 
 DEFAULT_URLSCAN_BASE_URL = "https://urlscan.io"
+logger = logging.getLogger(__name__)
 
 
 def analyze_urls_with_urlscan(urls):
@@ -36,7 +38,11 @@ def scan_url_with_urlscan(url):
 
         return parse_urlscan_result(url, scan_id, result)
 
+    except requests.Timeout:
+        logger.warning("URLScan timeout for URL: %s", url)
+        return build_unavailable_result(url, "URLScan analysis timed out.")
     except requests.RequestException as error:
+        logger.warning("URLScan unavailable for URL %s: %s", url, error)
         return build_unavailable_result(url, f"URLScan unavailable: {error}")
 
 
@@ -55,7 +61,7 @@ def submit_url(url, api_key):
             "visibility": visibility,
             "tags": ["ai-phishing"],
         },
-        timeout=20,
+        timeout=int(os.getenv("URLSCAN_SUBMIT_TIMEOUT_SECONDS", "15")),
     )
 
     if not response.ok:
@@ -79,7 +85,7 @@ def poll_scan_result(scan_id, api_key):
             headers={
                 "API-Key": api_key,
             },
-            timeout=20,
+            timeout=int(os.getenv("URLSCAN_RESULT_TIMEOUT_SECONDS", "15")),
         )
 
         if response.status_code == 200:
